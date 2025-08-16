@@ -87,7 +87,7 @@ const AuthForm = ({ isLogin, onAuthSuccess, onToggle }) => {
 
       {error && <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>}
 
-      <button type="submit" disabled={loading} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed">
+      <button type="submit" disabled={loading} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-secondary)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--accent-primary)] disabled:bg-gray-400 disabled:cursor-not-allowed">
         {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
       </button>
     </form>

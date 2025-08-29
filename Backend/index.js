@@ -32,6 +32,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/words', wordRoutes);
 app.get('/', (req, res)=> res.send('API Running'));
 
+app.get('/', (req, res)=>{
+    res.send('Api Running');
+})
 const PORT = 3030;
 app.listen(PORT, ()=>{
     console.log(`Server running on port ${PORT}`);

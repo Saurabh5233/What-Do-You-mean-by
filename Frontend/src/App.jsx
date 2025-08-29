@@ -172,14 +172,7 @@ function MainApp() {
 
   const handleViewEntry = (entry) => {
     setWord(entry.word);
-    if (entry.meaning) { // It's a saved word
-      setDefinition({
-        meaning: entry.meaning,
-        synonyms: entry.synonyms,
-      });
-    } else { // It's a history item
-      fetchDefinition(entry.word);
-    }
+    fetchDefinition(entry.word);
     navigate('/');
   };
 

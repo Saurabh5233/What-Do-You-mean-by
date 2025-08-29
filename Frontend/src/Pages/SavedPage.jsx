@@ -51,10 +51,16 @@ const SavedPage = ({ savedWords, onView, onDelete }) => {
           <h1 className="text-4xl font-bold text-[var(--text-primary)]">
             Saved Words
           </h1>
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             {savedWords.length > 0 && (
-              <div className="flex items-center mr-4">
-                <input type="checkbox" id="selectAll" checked={selectAll} onChange={handleSelectAll} />
+              <div className="flex items-center">
+                <input 
+                  type="checkbox" 
+                  id="selectAll" 
+                  checked={isAllSelected} 
+                  onChange={handleSelectAll} 
+                  className="form-checkbox h-5 w-5 text-[var(--accent-primary)] rounded focus:ring-[var(--accent-primary)]"
+                />
                 <label htmlFor="selectAll" className="ml-2 text-[var(--text-primary)]">Select All</label>
               </div>
             )}

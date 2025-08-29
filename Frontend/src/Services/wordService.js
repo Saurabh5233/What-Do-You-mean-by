@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3030/api/words';
+const API_URL = import.meta.env.VITE_WORDS_API_URL || 'http://localhost:3030/api/words';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');

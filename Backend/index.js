@@ -5,6 +5,7 @@ const session = require('express-session');
 const connectDB= require('./config/db');
 const passport = require("./config/passport");
 const authRoutes = require("./routes/auth");
+const wordRoutes = require("./routes/words");
 
 const app = express();
 app.use(express.urlencoded({ extended: true })); // to parse URL-encoded bodies
@@ -28,6 +29,7 @@ app.use(cors({
 }));
 
 app.use('/api/auth', authRoutes);
+app.use('/api/words', wordRoutes);
 app.get('/', (req, res)=> res.send('API Running'));
 
 const PORT = 3030;

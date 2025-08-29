@@ -50,7 +50,7 @@ export default function HomePage({
                 {isSaved ? 'Saved' : 'Save'}
               </button>
             </div>
-            <div className="prose lg:prose-xl max-w-none" dangerouslySetInnerHTML={{ __html: definition.meaning }} />
+            <div className="prose lg:prose-xl max-w-none dark:prose-invert text-[var(--text-primary)]" dangerouslySetInnerHTML={{ __html: definition.meaning }} />
           </div>
         )}
       </div>

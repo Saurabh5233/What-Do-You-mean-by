@@ -2,17 +2,40 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 
-const register = async (req, res)=>{
-    try{
-        const{email, password, name} = req.body;
+const register = async (req, res) => {
+    try {
+        const { email, password, name } = req.body;
+
+        if (!email || !password || !name) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({ message: 'User already exists' });
+        }
+
         const user = await User.create({
             email, password, name,
         });
 
-        const {password: pw, ...userData} = user.toObject();
-        res.status(201).json({ message: 'User registered successfully', user: userData });
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
-    }catch (error) {
+        res.status(201).json({
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name
+            }
+        });
+
+    } catch (error) {
+        console.error('Register error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }
@@ -61,17 +84,8 @@ const login = async (req, res)=>{
 
 
 
-const logout = (req, res)=>{
-    req.logout(function(err){
-        if(err){
-            return res.status(500).json({ message: 'Logout failed' });
-        }
-
-        req.session.destroy((err)=>{
-            res.clearCookie('connect.sid');
-            res.json({message: 'Logged out successfully'})
-        });
-    });
+const logout = (req, res) => {
+    res.status(200).json({ message: 'Logged out successfully' });
 }
 
 const getMe = async (req, res) => {

@@ -57,7 +57,7 @@ const HistoryPage = ({ history, onView, onDelete }) => {
                 <input 
                   type="checkbox" 
                   id="selectAllHistory" 
-                  checked={isAllSelected} 
+                  checked={selectAll} 
                   onChange={handleSelectAll} 
                   className="form-checkbox h-5 w-5 text-[var(--accent-primary)] rounded focus:ring-[var(--accent-primary)]"
                 />

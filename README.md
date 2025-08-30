@@ -1,5 +1,5 @@
 # [What Do You Mean By?](https://what-do-you-mean-by-wxfz.vercel.app/)
-<a href= "https://what-do-you-mean-by-wxfz.vercel.app/" target = "_blank"># [What do you mean?]
+<a href= "https://what-do-you-mean-by-wxfz.vercel.app/" target = "_blank"><h1>What Do You Mean By?</h1></a>
 A full-stack web application that allows users to search for word definitions using the Google Gemini API. The application features user authentication, allowing users to save definitions and view their search history.
 
 ## Features

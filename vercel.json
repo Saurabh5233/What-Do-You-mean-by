@@ -18,6 +18,7 @@
     {
       "src": "/(.*)",
       "dest": "Frontend/dist/index.html"
+
     }
   ]
 }

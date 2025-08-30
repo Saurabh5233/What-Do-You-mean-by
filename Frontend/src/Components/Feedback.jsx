@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import axios from 'axios';
+import { api } from '../Services/authService'; // Import the configured api instance
 
 const Feedback = ({ onClose }) => {
   const [feedback, setFeedback] = useState('');
@@ -18,7 +18,7 @@ const Feedback = ({ onClose }) => {
     setError(null);
     setSuccess(false);
     try {
-      await axios.post('/api/feedback', { feedback });
+      await api.post('/api/feedback', { feedback }); // Use the configured api instance
       setSuccess(true);
       setFeedback('');
       setTimeout(onClose, 2000); // Close modal after 2 seconds

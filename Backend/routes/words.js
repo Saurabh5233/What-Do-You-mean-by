@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
+  defineWord,
   getSavedWords,
   saveWord,
   deleteSavedWords,
@@ -9,6 +10,11 @@ const {
   deleteHistoryItems,
 } = require('../controllers/wordController');
 const { protect } = require('../middlewares/authMiddleware');
+
+// @route   POST api/words/define
+// @desc    Get definition for a word from Gemini
+// @access  Private
+router.post('/define', protect, defineWord);
 
 // @route   GET api/words/saved
 // @desc    Get all saved words for a user

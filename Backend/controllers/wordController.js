@@ -1,5 +1,76 @@
 const SavedWord = require('../models/SavedWord');
 const History = require('../models/History');
+const https = require('https');
+
+const promptFor = (searchWord) =>
+  `What is the meaning of the word "${searchWord}"? Provide a detailed explanation including its part of speech, definitions, Synonyms and an example sentence. Please format the entire response using simple HTML tags. Use tags like <h3> for headings, <b> for bold text, and <ul>/<ol>/<li> for lists where appropriate. IMPORTANT: Also, provide a comma-separated list of 4-5 synonyms inside a hidden div with the id "synonyms-data". For example: <div id="synonyms-data" style="display:none;">synonym1, synonym2, synonym3, synonym4</div>`;
+
+exports.defineWord = (req, res) => {
+  const { word } = req.body;
+  if (!word) {
+    return res.status(400).json({ message: 'Word is required' });
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  const model = 'gemini-1.5-flash-latest';
+  const postData = JSON.stringify({
+    contents: [{ parts: [{ text: promptFor(word) }] }],
+  });
+
+  const options = {
+    hostname: 'generativelanguage.googleapis.com',
+    path: `/v1beta/models/${model}:generateContent?key=${apiKey}`,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(postData),
+    },
+  };
+
+  const request = https.request(options, (response) => {
+    let data = '';
+    response.on('data', (chunk) => {
+      data += chunk;
+    });
+    response.on('end', () => {
+      if (response.statusCode >= 400) {
+        console.error('Gemini API Error:', data);
+        return res.status(response.statusCode).json({ message: 'Failed to fetch definition from Gemini API.', details: data });
+      }
+      try {
+        const parsedData = JSON.parse(data);
+        let outputText = 
+          parsedData.candidates?.[0]?.content?.parts?.[0]?.text ||
+          'No definition found.';
+
+        outputText = outputText.replace(/```[a-zA-Z]*\n?/g, '').trim();
+
+        const regex = new RegExp('<div id="synonyms-data"[^>]*>(.*?)</div>');
+        const synonymsMatch = outputText.match(regex);
+        const synonymsList = synonymsMatch ? synonymsMatch[1].trim() : '';
+
+        const cleanRegex = new RegExp('<div id="synonyms-data"[^>]*>.*?</div>');
+        const cleanedMeaning = outputText.replace(cleanRegex, '').trim();
+
+        res.json({
+          meaning: `<p>${cleanedMeaning}</p>`,
+          synonyms: synonymsList,
+        });
+      } catch (e) {
+        console.error('Error parsing Gemini response:', e);
+        res.status(500).json({ message: 'Error parsing Gemini response' });
+      }
+    });
+  });
+
+  request.on('error', (e) => {
+    console.error('HTTPS Request Error:', e);
+    res.status(500).json({ message: 'Failed to make request to Gemini API' });
+  });
+
+  request.write(postData);
+  request.end();
+};
 
 exports.getSavedWords = async (req, res) => {
   try {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './Context/AuthContext';
-import { getSavedWords, saveWord, deleteSavedWords, getHistory, saveHistory, deleteHistoryItems } from './Services/wordService';
+import { defineWord, getSavedWords, saveWord, deleteSavedWords, getHistory, saveHistory, deleteHistoryItems } from './Services/wordService';
 import Navbar from './Components/Navbar';
 import ThemeToggleButton from './Components/ThemeToggleButton';
 import HomePage from './Pages/HomePage';
@@ -64,70 +64,34 @@ function MainApp() {
 
   const fetchDefinition = async (wordToSearch) => {
     if (!wordToSearch.trim()) return;
+    if (!user) {
+      setError('Please log in to use the dictionary.');
+      return;
+    }
     setLoading(true);
     setError('');
     setDefinition({});
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      const model = 'gemini-1.5-flash-latest';
+      const data = await defineWord(wordToSearch);
+      setDefinition(data);
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: promptFor(wordToSearch) }] }],
-          }),
+      // Save to history after successfully fetching
+      const newHistoryItem = await saveHistory(wordToSearch);
+      setHistory((prev) => {
+        const existingIndex = prev.findIndex(item => item.word === newHistoryItem.word);
+        if (existingIndex !== -1) {
+          const newHistory = [...prev];
+          newHistory[existingIndex] = newHistoryItem;
+          return newHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+        } else {
+          return [newHistoryItem, ...prev].sort((a, b) => new Date(b.date) - new Date(a.date));
         }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error?.message || 'API request failed');
-      }
-
-      let outputText =
-        data.candidates?.[0]?.content?.parts?.[0]?.text ||
-        'No definition found.';
-
-      outputText = outputText.replace(/```[a-zA-Z]*\n?/g, '').trim();
-
-      const regex = new RegExp('<div id="synonyms-data"[^>]*>(.*?)</div>');
-      const synonymsMatch = outputText.match(regex);
-      const synonymsList = synonymsMatch ? synonymsMatch[1].trim() : '';
-
-      const cleanRegex = new RegExp('<div id="synonyms-data"[^>]*>.*?</div>');
-      const cleanedMeaning = outputText.replace(cleanRegex, '').trim();
-
-      setDefinition({
-        meaning: `<p>${cleanedMeaning}</p>`, 
-        synonyms: synonymsList,
       });
-
-      if (user) {
-        try {
-          const newHistoryItem = await saveHistory(wordToSearch);
-          setHistory((prev) => {
-            const existingIndex = prev.findIndex(item => item.word === newHistoryItem.word);
-            if (existingIndex !== -1) {
-              const newHistory = [...prev];
-              newHistory[existingIndex] = newHistoryItem;
-              return newHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-            } else {
-              return [newHistoryItem, ...prev].sort((a, b) => new Date(b.date) - new Date(a.date));
-            }
-          });
-        } catch (error) {
-          console.error('Failed to save history', error);
-        }
-      }
 
     } catch (err) {
       console.error(err);
-      setError('Failed to fetch definition from Gemini API.');
+      setError('Failed to fetch definition.');
     } finally {
       setLoading(false);
     }
@@ -175,9 +139,6 @@ function MainApp() {
     fetchDefinition(entry.word);
     navigate('/');
   };
-
-  const promptFor = (searchWord) =>
-    `What is the meaning of the word "${searchWord}"? Provide a detailed explanation including its part of speech, definitions, Synonyms and an example sentence. Please format the entire response using simple HTML tags. Use tags like <h3> for headings, <b> for bold text, and <ul>/<ol>/<li> for lists where appropriate. IMPORTANT: Also, provide a comma-separated list of 4-5 synonyms inside a hidden div with the id "synonyms-data". For example: <div id="synonyms-data" style="display:none;">synonym1, synonym2, synonym3, synonym4</div>`;
 
   return (
     <div className="min-h-screen bg-[#F2F0E9] dark:bg-[#0F2B2C] transition-colors duration-300">

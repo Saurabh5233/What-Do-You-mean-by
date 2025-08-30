@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
+import Feedback from './Feedback';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, loading } = useAuth();
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [isFeedbackOpen, setFeedbackOpen] = useState(false);
   const menuRef = useRef(null);
 
   const NavButton = ({ path, onClick, icon, label, isActive }) => (
@@ -45,6 +47,7 @@ export default function Navbar() {
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 bg-[var(--bg-secondary)] shadow-t-lg border-t border-[var(--border-color)] transition-colors duration-300">
+      {isFeedbackOpen && <Feedback onClose={() => setFeedbackOpen(false)} />}
       {isProfileMenuOpen && user && (
         <div ref={menuRef} className="absolute bottom-full mb-2 w-full max-w-2xl mx-auto flex justify-end pr-2">
             <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg shadow-lg w-48">
@@ -52,9 +55,18 @@ export default function Navbar() {
                     <p className="font-semibold text-[var(--text-primary)]">{user.name || 'Profile'}</p>
                     <p className="text-sm text-[var(--text-secondary)]">{user.email}</p>
                 </div>
+                <button
+                    onClick={() => {
+                        setFeedbackOpen(true);
+                        setProfileMenuOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"
+                >
+                    Feedback
+                </button>
                 <button 
                     onClick={handleLogout} 
-                    className="w-full text-left px-4 py-2 text-sm text-white bg-[red] hover:bg-[#7d3232] rounded-lg"
+                    className="w-full text-left px-4 py-2 text-sm text-white bg-[red] hover:bg-[#7d3232] rounded-b-lg"
                 >
                     Logout
                 </button>

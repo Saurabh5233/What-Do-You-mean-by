@@ -23,7 +23,8 @@ const AuthPage = () => {
 
   const handleGoogleLogin = () => {
     localStorage.setItem('postLoginRedirect', from);
-    window.location.href = `${import.meta.env.VITE_API_URL}/google`;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3030';
+    window.location.href = `${apiUrl}/api/auth/google`;
   };
 
   const toggleForm = () => {

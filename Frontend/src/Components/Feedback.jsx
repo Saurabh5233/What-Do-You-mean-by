@@ -18,7 +18,7 @@ const Feedback = ({ onClose }) => {
     setError(null);
     setSuccess(false);
     try {
-      await api.post('/api/feedback', { feedback }); // Use the configured api instance
+      await api.post('/feedback', { feedback }); // Use the configured api instance
       setSuccess(true);
       setFeedback('');
       setTimeout(onClose, 2000); // Close modal after 2 seconds

@@ -1,5 +1,9 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require("google-auth-library");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 
 
 const register = async (req, res) => {
@@ -104,6 +108,44 @@ const googleCallback = async(req, res)=>{
 }
 
 
+const loginWithGoogleToken = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ message: "No token provided" });
+
+    // Verify token with Google
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const email = payload.email;
+
+    // Find or create user
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        name: payload.name,
+        email,
+        googleId: payload.sub,
+        password: null, // since it's Google account
+      });
+    }
+
+    // Create JWT for your app
+    const appToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.json({ token: appToken });
+  } catch (error) {
+    console.error("Google login error:", error);
+    res.status(401).json({ message: "Invalid Google token" });
+  }
+};
+
+
 module.exports = {
-    login, register, logout, googleCallback, getMe
+    login, register, logout, googleCallback, getMe, loginWithGoogleToken
 };

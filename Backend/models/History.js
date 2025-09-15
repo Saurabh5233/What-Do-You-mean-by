@@ -9,14 +9,21 @@ const HistorySchema = new mongoose.Schema({
   word: {
     type: String,
     required: true,
+    trim: true,
   },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
+}, {
+  // `timestamps: true` will add `createdAt` and `updatedAt` fields.
+  // `createdAt` can represent the first time a word was searched.
+  // `updatedAt` can be used to track the most recent search time for sorting.
+  timestamps: true
 });
 
 // To prevent duplicate history entries for the same user and word
+// The unique index prevents duplicate history entries for the same user and word.
+// To update the search date when a user searches for the same word again (a common UX pattern),
+// the controller responsible for saving history should use an `upsert` operation.
+// Using `findOneAndUpdate` will automatically update the `updatedAt` timestamp.
+// Example: `History.findOneAndUpdate({ user: userId, word }, {}, { upsert: true });`
 HistorySchema.index({ user: 1, word: 1 }, { unique: true });
 
 module.exports = mongoose.model('History', HistorySchema);

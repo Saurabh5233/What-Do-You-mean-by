@@ -9,6 +9,7 @@ const SavedWordSchema = new mongoose.Schema({
   word: {
     type: String,
     required: true,
+    trim: true,
   },
   synonyms: {
     type: String,
@@ -17,10 +18,8 @@ const SavedWordSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+}, {
+  timestamps: true // Automatically add createdAt and updatedAt fields
 });
 
 // To prevent a user from saving the same word multiple times

@@ -18,7 +18,10 @@ app.use(express.json()); // it's a middleware to parse incoming JSON requests
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false   
+    saveUninitialized: false , 
+    cookie:{
+        maxAge: 1000 * 60 * 60 * 24 * 30 
+    }  
 }));
 
 app.use(passport.initialize()); // this starts the passport

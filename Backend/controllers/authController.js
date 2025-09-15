@@ -56,10 +56,15 @@ const login = async (req, res)=>{
         }
 
         
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select('+password');
         
         // Check if user exists and password matches
-        if (!user || !(await user.comparePassword(password))) {
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
@@ -67,7 +72,7 @@ const login = async (req, res)=>{
         const token = jwt.sign(
             { id: user._id }, 
             process.env.JWT_SECRET, 
-            { expiresIn: '1h' }
+            { expiresIn: '30d' }
         );
 
         // Send successful response
@@ -101,7 +106,7 @@ const googleCallback = async(req, res)=>{
     const token = jwt.sign(
         {id: req.user._id}, 
         process.env.JWT_SECRET, 
-        { expiresIn: '1h' }
+        { expiresIn: '30d' }
     );
 
     res.redirect(`${process.env.FRONTEND_URL || "http://localhost:5173"}/auth/callback?token=${token}`);
@@ -135,7 +140,7 @@ const loginWithGoogleToken = async (req, res) => {
 
     // Create JWT for your app
     const appToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "30d",
     });
 
     res.json({ token: appToken });

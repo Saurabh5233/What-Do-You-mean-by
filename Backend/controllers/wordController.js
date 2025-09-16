@@ -2,16 +2,17 @@ const SavedWord = require('../models/SavedWord');
 const History = require('../models/History');
 const https = require('https');
 
-//3rd
+//2nd
 const promptFor = (searchWord) => {
   return `What is the meaning of the word "${searchWord}"?  
-Return the result as simple HTML, styled using Tailwind classes.  
+Return the result as simple HTML, styled with Tailwind classes (no inline CSS).  
 
-Follow this exact structure:
+Use this exact structure:
 <div class="space-y-3 p-4">
   <p><span class="font-bold text-gray-800">Word:</span> <span class="text-gray-700">${searchWord}</span></p>
   <p><span class="font-bold text-gray-800">Part of Speech:</span> <span class="text-gray-700">[one-word part of speech]</span></p>
-
+  
+  <!-- Language Select Dropdown -->
   <div>
     <label for="language" class="font-bold text-gray-800 mr-2">Meaning:</label>
     <select id="language" class="border border-gray-300 rounded-md px-2 py-1 text-gray-700">
@@ -21,7 +22,7 @@ Follow this exact structure:
       <option value="fr">French</option>
       <option value="de">German</option>
     </select>
-    <p id="meaning-text" class="text-gray-700 mt-2">[brief meaning in English]</p>
+    <p id="meaning-text" class="text-gray-700 mt-2">[brief meaning of the word in English]</p>
   </div>
 
   <p><span class="font-bold text-gray-800">Synonyms:</span> <span class="text-gray-700">word1, word2, word3</span></p>
@@ -29,82 +30,17 @@ Follow this exact structure:
   <p><span class="font-bold text-gray-800">Example:</span> 
      <span class="text-gray-700">Here is a sentence using <span class="font-semibold text-blue-600">${searchWord}</span>.</span>
   </p>
-
-  <!-- Hidden translations for meaning -->
-  <div id="meanings-data" class="hidden">
-    {
-      "en": "[brief meaning in English]",
-      "hi": "[meaning in Hindi]",
-      "es": "[meaning in Spanish]",
-      "fr": "[meaning in French]",
-      "de": "[meaning in German]"
-    }
-  </div>
-
+  
+  <!-- Hidden Synonyms Data -->
   <div id="synonyms-data" class="hidden">word1, word2, word3</div>
-
-  <script>
-    try {
-      const meanings = JSON.parse(document.getElementById("meanings-data").textContent);
-      const meaningText = document.getElementById("meaning-text");
-      const languageSelect = document.getElementById("language");
-      languageSelect.addEventListener("change", (e) => {
-        meaningText.textContent = meanings[e.target.value] || meanings["en"];
-      });
-    } catch (err) {
-      console.error("Error parsing meanings:", err);
-    }
-  </script>
 </div>
 
 Rules:
-- Do NOT display the translations object visibly.
-- The <p id="meaning-text"> must only show the meaning in the selected language.
-- Default language must be English.`;
+- Provide translations for the "Meaning" field for each language option in the dropdown.
+- Default language must be English (pre-selected).
+- Fill all other fields normally (part of speech, synonyms, antonyms, example sentence).
+- The <p id="meaning-text"> must contain the meaning of "${searchWord}" in the currently selected language.`;
 };
-
-
-
-
-//2nd
-// const promptFor = (searchWord) => {
-//   return `What is the meaning of the word "${searchWord}"?  
-// Return the result as simple HTML, styled with Tailwind classes (no inline CSS).  
-
-// Use this exact structure:
-// <div class="space-y-3 p-4">
-//   <p><span class="font-bold text-gray-800">Word:</span> <span class="text-gray-700">${searchWord}</span></p>
-//   <p><span class="font-bold text-gray-800">Part of Speech:</span> <span class="text-gray-700">[one-word part of speech]</span></p>
-  
-//   <!-- Language Select Dropdown -->
-//   <div>
-//     <label for="language" class="font-bold text-gray-800 mr-2">Meaning:</label>
-//     <select id="language" class="border border-gray-300 rounded-md px-2 py-1 text-gray-700">
-//       <option value="en" selected>English</option>
-//       <option value="hi">Hindi</option>
-//       <option value="es">Spanish</option>
-//       <option value="fr">French</option>
-//       <option value="de">German</option>
-//     </select>
-//     <p id="meaning-text" class="text-gray-700 mt-2">[brief meaning of the word in English]</p>
-//   </div>
-
-//   <p><span class="font-bold text-gray-800">Synonyms:</span> <span class="text-gray-700">word1, word2, word3</span></p>
-//   <p><span class="font-bold text-gray-800">Antonyms:</span> <span class="text-gray-700">wordA, wordB</span></p>
-//   <p><span class="font-bold text-gray-800">Example:</span> 
-//      <span class="text-gray-700">Here is a sentence using <span class="font-semibold text-blue-600">${searchWord}</span>.</span>
-//   </p>
-  
-//   <!-- Hidden Synonyms Data -->
-//   <div id="synonyms-data" class="hidden">word1, word2, word3</div>
-// </div>
-
-// Rules:
-// - Provide translations for the "Meaning" field for each language option in the dropdown.
-// - Default language must be English (pre-selected).
-// - Fill all other fields normally (part of speech, synonyms, antonyms, example sentence).
-// - The <p id="meaning-text"> must contain the meaning of "${searchWord}" in the currently selected language.`;
-// };
 
 
 

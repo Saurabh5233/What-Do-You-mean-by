@@ -2,9 +2,30 @@ const SavedWord = require('../models/SavedWord');
 const History = require('../models/History');
 const https = require('https');
 
-const promptFor = (searchWord) =>
-  `What is the meaning of the word "${searchWord}"? Provide a detailed explanation including its part of speech, definitions, Synonyms and an example sentence. Please format the entire response using simple HTML tags. Use tags like <h3> for headings, <b> for bold text, and <ul>/<ol>/<li> for lists where appropriate. IMPORTANT: Also, provide a comma-separated list of 4-5 synonyms inside a hidden div with the id "synonyms-data". For example: <div id="synonyms-data" style="display:none;">synonym1, synonym2, synonym3, synonym4</div>`;
+const promptFor = (searchWord) => {
+  return `What is the meaning of the word "${searchWord}"?  
+Return the result as simple HTML, but styled using Tailwind classes (no inline CSS).  
 
+Use this exact structure:  
+<div class="space-y-3 p-4">
+  <p><span class="font-bold text-gray-800">Word:</span> <span class="text-gray-700">${searchWord}</span></p>
+  <p><span class="font-bold text-gray-800">Part of Speech:</span> <span class="text-gray-700">[one-word part of speech]</span></p>
+  <p><span class="font-bold text-gray-800">Meaning:</span> <span class="text-gray-700">[brief meaning of the word]</span></p>
+  <p><span class="font-bold text-gray-800">Synonyms:</span> <span class="text-gray-700">word1, word2, word3</span></p>
+  <p><span class="font-bold text-gray-800">Antonyms:</span> <span class="text-gray-700">wordA, wordB</span></p>
+  <p><span class="font-bold text-gray-800">Example:</span> <span class="text-gray-700">Here is a sentence using <span class="font-semibold text-blue-600">${searchWord}</span>.</span></p>
+  <div id="synonyms-data" class="hidden">word1, word2, word3</div>
+</div>
+
+Rules:
+- Always fill each key with real data.
+- Use exactly one short definition.
+- Provide 4-5 synonyms and 2-3 antonyms (comma-separated).
+- Example sentence must highlight the word using <span class="font-semibold text-blue-600">${searchWord}</span>.`;
+};
+
+  // `What is the meaning of the word "${searchWord}"? Provide a detailed explanation including its part of speech, definitions, Synonyms and an example sentence. Please format the entire response using simple HTML tags. Use tags like <h3> for headings, <b> for bold text, and <ul>/<ol>/<li> for lists where appropriate. IMPORTANT: Also, provide a comma-separated list of 4-5 synonyms inside a hidden div with the id "synonyms-data". For example: <div id="synonyms-data" style="display:none;">synonym1, synonym2, synonym3, synonym4</div>`;
+    
 exports.defineWord = (req, res) => {
   const { word } = req.body;
   if (!word) {

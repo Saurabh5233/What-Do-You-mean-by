@@ -5,14 +5,13 @@ const https = require('https');
 //3rd
 const promptFor = (searchWord) => {
   return `What is the meaning of the word "${searchWord}"?  
-Return the result as simple HTML, styled with Tailwind classes (no inline CSS).  
+Return the result as simple HTML, styled using Tailwind classes.  
 
-Use this exact structure:
+Follow this exact structure:
 <div class="space-y-3 p-4">
   <p><span class="font-bold text-gray-800">Word:</span> <span class="text-gray-700">${searchWord}</span></p>
   <p><span class="font-bold text-gray-800">Part of Speech:</span> <span class="text-gray-700">[one-word part of speech]</span></p>
-  
-  <!-- Meaning with Language Selector -->
+
   <div>
     <label for="language" class="font-bold text-gray-800 mr-2">Meaning:</label>
     <select id="language" class="border border-gray-300 rounded-md px-2 py-1 text-gray-700">
@@ -22,7 +21,7 @@ Use this exact structure:
       <option value="fr">French</option>
       <option value="de">German</option>
     </select>
-    <p id="meaning-text" class="text-gray-700 mt-2">[brief meaning of the word in English]</p>
+    <p id="meaning-text" class="text-gray-700 mt-2">[brief meaning in English]</p>
   </div>
 
   <p><span class="font-bold text-gray-800">Synonyms:</span> <span class="text-gray-700">word1, word2, word3</span></p>
@@ -30,14 +29,11 @@ Use this exact structure:
   <p><span class="font-bold text-gray-800">Example:</span> 
      <span class="text-gray-700">Here is a sentence using <span class="font-semibold text-blue-600">${searchWord}</span>.</span>
   </p>
-  
-  <!-- Hidden Synonyms Data -->
-  <div id="synonyms-data" class="hidden">word1, word2, word3</div>
-  
-  <!-- Meaning Translations (Hidden) -->
+
+  <!-- Hidden translations for meaning -->
   <div id="meanings-data" class="hidden">
     {
-      "en": "[brief meaning of the word in English]",
+      "en": "[brief meaning in English]",
       "hi": "[meaning in Hindi]",
       "es": "[meaning in Spanish]",
       "fr": "[meaning in French]",
@@ -45,25 +41,28 @@ Use this exact structure:
     }
   </div>
 
-  <!-- Script to Switch Meaning -->
+  <div id="synonyms-data" class="hidden">word1, word2, word3</div>
+
   <script>
-    const meanings = JSON.parse(document.getElementById("meanings-data").textContent);
-    const meaningText = document.getElementById("meaning-text");
-    const languageSelect = document.getElementById("language");
-    
-    languageSelect.addEventListener("change", (e) => {
-      const lang = e.target.value;
-      meaningText.textContent = meanings[lang] || meanings["en"];
-    });
+    try {
+      const meanings = JSON.parse(document.getElementById("meanings-data").textContent);
+      const meaningText = document.getElementById("meaning-text");
+      const languageSelect = document.getElementById("language");
+      languageSelect.addEventListener("change", (e) => {
+        meaningText.textContent = meanings[e.target.value] || meanings["en"];
+      });
+    } catch (err) {
+      console.error("Error parsing meanings:", err);
+    }
   </script>
 </div>
 
 Rules:
-- Provide translations for the "Meaning" field for each language option (English, Hindi, Spanish, French, German).
-- Only the meaning should change when a new language is selected, all other fields remain the same.
-- Ensure the JSON inside #meanings-data contains correct translations for each language code.
-- Default meaning must be English.`;
+- Do NOT display the translations object visibly.
+- The <p id="meaning-text"> must only show the meaning in the selected language.
+- Default language must be English.`;
 };
+
 
 
 

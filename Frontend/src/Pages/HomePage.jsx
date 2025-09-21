@@ -1,8 +1,23 @@
 import React from 'react';
+import { HiMiniSpeakerWave } from "react-icons/hi2";
 
 export default function HomePage({ 
   word, setWord, handleSubmit, loading, error, definition, onSave, isSaved 
 }) {
+
+  const speakText = ()=>{
+    const text = word;
+    if(text.trim() === ""){
+      alert("Please Enter some Text.....");
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang= "en-US";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    speechSynthesis.speak(utterance);      
+
+  }
+
   return (
     <div className="w-full max-w-2xl mx-auto p-6 md:p-8">
       <div className="bg-[var(--bg-secondary)] rounded-2xl shadow-lg p-8 transition-colors duration-300">
@@ -42,6 +57,7 @@ export default function HomePage({
           <div className="mt-8 p-6 bg-[var(--bg-primary)] rounded-lg border border-[var(--border-color)] transition-colors duration-300">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-[var(--text-primary)]">Meaning:</h2>
+              <HiMiniSpeakerWave onClick={speakText} />
               <button 
                 onClick={onSave} 
                 disabled={isSaved}

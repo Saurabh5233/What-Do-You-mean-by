@@ -57,7 +57,7 @@ export default function HomePage({
           <div className="mt-8 p-6 bg-[var(--bg-primary)] rounded-lg border border-[var(--border-color)] transition-colors duration-300">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-[var(--text-primary)]">Meaning:</h2>
-              <HiMiniSpeakerWave onClick={speakText} />
+              <HiMiniSpeakerWave onClick={speakText} className='text-4xl text-green-600 cursor-pointer hover:scale-110 transition-transform'/>
               <button 
                 onClick={onSave} 
                 disabled={isSaved}

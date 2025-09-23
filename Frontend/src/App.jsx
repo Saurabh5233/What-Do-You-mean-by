@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './Context/AuthContext';
 import { defineWord, getSavedWords, saveWord, deleteSavedWords, getHistory, saveHistory, deleteHistoryItems } from './Services/wordService';
@@ -105,7 +105,7 @@ function MainApp() {
   const handleSave = async () => {
     if (!definition.meaning || !user) return;
     const newEntry = { word, synonyms: definition.synonyms, meaning: definition.meaning };
-    
+
     if (!savedWords.some((item) => item.word === word)) {
       try {
         const savedWord = await saveWord(newEntry);
@@ -140,44 +140,136 @@ function MainApp() {
     navigate('/');
   };
 
+
+  // to handle background animation...
+  // const canvasRef = useRef(null);
+
+  // useEffect(() => {
+  //   const canvas = canvasRef.current;
+  //   if (!canvas) return; // <- avoid running early
+
+  //   const ctx = canvas.getContext("2d");
+  //   function resizeCanvas() {
+  //     canvas.width = window.innerWidth;
+  //     canvas.height = window.innerHeight;
+  //   }
+  //   resizeCanvas();
+  //   window.addEventListener("resize", resizeCanvas);
+
+  //   // --- Stars setup ---
+  //   const stars = [];
+  //   const numStars = 300;
+  //   for (let i = 0; i < numStars; i++) {
+  //     stars.push({
+  //       x: Math.random() * canvas.width,
+  //       y: Math.random() * canvas.height,
+  //       radius: Math.random() * 2 + 1,
+  //       twinkle: Math.random() * 0.05 + 0.02,
+  //       alpha: Math.random() * 0.5 + 0.5,
+  //     });
+  //   }
+
+  //   class Ripple {
+  //     constructor(x, y) {
+  //       this.x = x;
+  //       this.y = y;
+  //       this.radius = 0;
+  //       this.alpha = 0.5;
+  //     }
+  //     update() {
+  //       this.radius += 2;
+  //       this.alpha -= 0.01;
+  //     }
+  //     draw() {
+  //       ctx.beginPath();
+  //       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+  //       ctx.strokeStyle = `rgba(255,255,255,${this.alpha})`;
+  //       ctx.lineWidth = 2;
+  //       ctx.stroke();
+  //     }
+  //   }
+
+  //   const ripples = [];
+
+  //   function animate() {
+  //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  //     // Stars
+  //     stars.forEach((star) => {
+  //       star.alpha += star.twinkle;
+  //       if (star.alpha > 1 || star.alpha < 0.3) star.twinkle *= -1;
+  //       ctx.beginPath();
+  //       ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+  //       ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+  //       ctx.fill();
+  //     });
+
+  //     // Ripples
+  //     for (let i = ripples.length - 1; i >= 0; i--) {
+  //       ripples[i].update();
+  //       ripples[i].draw();
+  //       if (ripples[i].alpha <= 0) ripples.splice(i, 1);
+  //     }
+
+  //     requestAnimationFrame(animate);
+  //   }
+
+  //   const handleClick = (e) => ripples.push(new Ripple(e.clientX, e.clientY));
+  //   const handleMove = (e) => ripples.push(new Ripple(e.clientX, e.clientY));
+
+  //   canvas.addEventListener("click", handleClick);
+  //   canvas.addEventListener("mousemove", handleMove);
+
+  //   animate();
+  //   console.log("Animation working.....");
+  //   return () => {
+  //     window.removeEventListener("resize", resizeCanvas);
+  //     canvas.removeEventListener("click", handleClick);
+  //     canvas.removeEventListener("mousemove", handleMove);
+  //   };
+  // }, []);
+
+
   return (
-    <div className="min-h-screen bg-[#F2F0E9] dark:bg-[#0F2B2C] transition-colors duration-300">
-      <ThemeToggleButton theme={theme} toggleTheme={toggleTheme} />
-      
-      <Routes>
-        <Route path="/" element={
-          <HomePage
-            word={word}
-            setWord={setWord}
-            handleSubmit={handleSubmit}
-            loading={loading}
-            error={error}
-            definition={definition}
-            onSave={handleSave}
-            isSaved={savedWords.some((item) => item.word === word)}
-          />
-        } />
-        
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/auth/callback" element={<AuthCallback />} />
-        
-        <Route path="/saved" element={
-          <ProtectedRoute>
-            <SavedPage savedWords={savedWords} onView={handleViewEntry} onDelete={handleDeleteSavedWords} />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/history" element={
-          <ProtectedRoute>
-            <HistoryPage history={history} onView={handleViewEntry} onDelete={handleDeleteHistoryItems} />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      
-      <Navbar />
-    </div>
+      // <div className="min-h-screen bg-[#F2F0E9] dark:bg-[#0F2B2C] transition-colors duration-300">
+      <div className="min-h-screen bg-gradient-to-br from-[#0F2027] to-[#2C5364]  transition-colors duration-300">
+
+        <ThemeToggleButton theme={theme} toggleTheme={toggleTheme} />
+
+        <Routes>
+          <Route path="/" element={
+            <HomePage
+              word={word}
+              setWord={setWord}
+              handleSubmit={handleSubmit}
+              loading={loading}
+              error={error}
+              definition={definition}
+              onSave={handleSave}
+              isSaved={savedWords.some((item) => item.word === word)}
+            />
+          } />
+
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+
+          <Route path="/saved" element={
+            <ProtectedRoute>
+              <SavedPage savedWords={savedWords} onView={handleViewEntry} onDelete={handleDeleteSavedWords} />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/history" element={
+            <ProtectedRoute>
+              <HistoryPage history={history} onView={handleViewEntry} onDelete={handleDeleteHistoryItems} />
+            </ProtectedRoute>
+          } />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+
+        <Navbar />
+      </div>
   );
 }
 

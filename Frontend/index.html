@@ -1,13 +1,101 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/image.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>What Do You Mean By?</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/image.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What Do You Mean By?</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+  <!-- Script for background.... -->
+  <!-- <script>
+    const canvas = document.getElementsById('root');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Stars
+    const stars = [];
+    const numStars = 300;
+    for (let i = 0; i < numStars; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 1,
+        twinkle: Math.random() * 0.05 + 0.02,
+        alpha: Math.random() * 0.5 + 0.5
+      });
+    }
+
+    // Ripple class
+    class Ripple {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = 0;
+        this.alpha = 0.5;
+      }
+      update() {
+        this.radius += 2;
+        this.alpha -= 0.01;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${ this.alpha })`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+
+    const ripples = [];
+
+    // Animation loop
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw stars
+      stars.forEach(star => {
+        star.alpha += star.twinkle;
+        if (star.alpha > 1 || star.alpha < 0.3) star.twinkle *= -1;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${ star.alpha })`;
+        ctx.fill();
+      });
+
+      // Draw ripples
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        ripples[i].update();
+        ripples[i].draw();
+        if (ripples[i].alpha <= 0) ripples.splice(i, 1);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // Click ripple
+    canvas.addEventListener('click', e => {
+      ripples.push(new Ripple(e.clientX, e.clientY));
+    });
+
+    // Mouse movement ripple
+    canvas.addEventListener('mousemove', e => {
+      ripples.push(new Ripple(e.clientX, e.clientY));
+    });
+
+    // Resize canvas
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    animate();
+  </script> -->
+</body>
+
 </html>

@@ -20,8 +20,7 @@ export default function HomePage({
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6 md:p-8">
-      {/* <div className="bg-[var(--bg-secondary)] rounded-2xl shadow-lg p-8 transition-colors duration-300"> */}
-      <div className="dark:bg-[var(--bg-secondary)] rounded-2xl shadow-lg p-8 transition-colors duration-300">
+      <div className="bg-[var(--bg-secondary)] rounded-2xl shadow-lg p-8 transition-colors duration-300">
         <h1 className="text-4xl font-bold text-[var(--text-primary)] text-center mb-8">
           What Do You Mean By?
         </h1>

@@ -5,7 +5,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 // Initialize the Google AI client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ 
-  model: "gemini-pro",
+  model: "gemini-1.0-pro",
 });
 
 // Prompt helper for GPT

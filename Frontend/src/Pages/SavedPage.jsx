@@ -11,31 +11,19 @@ const SavedPage = ({ savedWords, onView, onDelete }) => {
   const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
-    if (selectAll) {
-      setSelected(savedWords.map(item => item._id));
-    } else {
-      if (selected.length === savedWords.length && savedWords.length > 0) {
-        // do nothing
-      }
-    }
+    setSelected(selectAll ? savedWords.map(item => item._id) : []);
   }, [selectAll, savedWords]);
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll) {
-      setSelected(savedWords.map(item => item._id));
-    } else {
-      setSelected([]);
-    }
   };
 
   const handleSelect = (id) => {
-    if (selected.includes(id)) {
-      setSelected(selected.filter(item => item !== id));
-    } else {
-      setSelected([...selected, id]);
-    }
-    setSelectAll(selected.length + 1 === savedWords.length);
+    const newSelected = selected.includes(id)
+      ? selected.filter(item => item !== id)
+      : [...selected, id];
+    setSelected(newSelected);
+    setSelectAll(savedWords.length > 0 && newSelected.length === savedWords.length);
   };
 
   const handleDelete = () => {

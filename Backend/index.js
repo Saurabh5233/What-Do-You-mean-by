@@ -28,14 +28,7 @@ app.use(passport.initialize()); // this starts the passport
 app.use(passport.session()); // for persistent login sessions
 
 app.use(cors({
-    origin: function (origin, callback) {
-        const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081' ];
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: [process.env.FRONTEND_URL, 'http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081' ],
     credentials: true
 }));
 

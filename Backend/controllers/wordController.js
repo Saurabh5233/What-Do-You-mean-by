@@ -32,13 +32,13 @@ exports.defineWord = async (req, res) => {
   if (!word) return res.status(400).json({ message: "Word is required" });
 
   try {
-    const completion = await openai.createChatCompletion({
+    const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: promptFor(word) }],
       temperature: 0.7,
     });
 
-    let output = completion.data.choices[0].message.content;
+    let output = completion.choices[0].message.content;
 
     // Extract JSON from GPT output
     const jsonStart = output.indexOf("{");

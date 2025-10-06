@@ -11,31 +11,19 @@ const HistoryPage = ({ history, onView, onDelete }) => {
   const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
-    if (selectAll) {
-      setSelected(history.map(item => item._id));
-    } else {
-      if (selected.length === history.length && history.length > 0) {
-        // do nothing
-      }
-    }
+    setSelected(selectAll ? history.map(item => item._id) : []);
   }, [selectAll, history]);
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
-    if (!selectAll) {
-      setSelected(history.map(item => item._id));
-    } else {
-      setSelected([]);
-    }
   };
 
   const handleSelect = (id) => {
-    if (selected.includes(id)) {
-      setSelected(selected.filter(item => item !== id));
-    } else {
-      setSelected([...selected, id]);
-    }
-    setSelectAll(selected.length + 1 === history.length);
+    const newSelected = selected.includes(id)
+      ? selected.filter(item => item !== id)
+      : [...selected, id];
+    setSelected(newSelected);
+    setSelectAll(history.length > 0 && newSelected.length === history.length);
   };
 
   const handleDelete = () => {

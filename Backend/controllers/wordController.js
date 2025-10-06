@@ -36,6 +36,11 @@ exports.defineWord = async (req, res) => {
   try {
     const result = await model.generateContent(promptFor(word));
     const response = await result.response;
+
+    if (response.promptFeedback?.blockReason) {
+      return res.status(500).json({ message: "Request was blocked for safety reasons." });
+    }
+
     let output = response.text();
 
     // Gemini with JSON mode should return a clean JSON string.

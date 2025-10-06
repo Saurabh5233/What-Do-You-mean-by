@@ -28,7 +28,10 @@ export default function HomePage({
         <h1 className="text-4xl font-bold text-[var(--text-primary)] text-center mb-8">
           What Do You Mean By?
         </h1>
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 mb-6">
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          if (word.trim()) handleSubmit(e);
+        }} className="flex flex-col sm:flex-row gap-3 mb-6">
           <input
             type="text"
             className="flex-grow w-full sm:w-auto text-lg px-5 py-3 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] transition-colors duration-300"

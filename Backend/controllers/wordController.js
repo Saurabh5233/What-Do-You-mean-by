@@ -1,16 +1,18 @@
 const SavedWord = require('../models/SavedWord');
 const History = require('../models/History');
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+// Initialize the Google AI client
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ 
+  model: "gemini-1.5-flash",
+  generationConfig: { responseMimeType: "application/json" }
 });
-// const openai = new OpenAIApi(configuration);
 
 // Prompt helper for GPT
 const promptFor = (word) => {
-  return `Provide detailed information about the word "${word}" in JSON format. 
-Format:
+  // Updated prompt for Gemini, explicitly asking for a JSON object.
+  return `Provide detailed information about the word "${word}". Respond with only a valid JSON object in the following format.
 {
   "Word": "...",
   "PartOfSpeech": "...",
@@ -32,30 +34,23 @@ exports.defineWord = async (req, res) => {
   if (!word) return res.status(400).json({ message: "Word is required" });
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: promptFor(word) }],
-      temperature: 0.7,
-    });
+    const result = await model.generateContent(promptFor(word));
+    const response = await result.response;
+    let output = response.text();
 
-    let output = completion.choices[0].message.content;
-
-    // Extract JSON from GPT output
-    const jsonStart = output.indexOf("{");
-    const jsonEnd = output.lastIndexOf("}");
-    output = output.slice(jsonStart, jsonEnd + 1);
-    const result = JSON.parse(output);
+    // Gemini with JSON mode should return a clean JSON string.
+    const parsedResult = JSON.parse(output);
 
     // Wrap keys in bold for frontend
     const formattedResult = {};
-    for (const key in result) {
-      formattedResult[`<b>${key}</b>`] = result[key];
+    for (const key in parsedResult) {
+      formattedResult[`<b>${key}</b>`] = parsedResult[key];
     }
 
     res.json(formattedResult);
 
   } catch (err) {
-    console.error("OpenAI API Error:", err);
+    console.error("Gemini API Error:", err);
     res.status(500).json({ message: "Failed to fetch definition", details: err.message });
   }
 };

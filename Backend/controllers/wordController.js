@@ -83,7 +83,7 @@ exports.defineWord = (req, res) => {
 
   const options = {
     hostname: 'generativelanguage.googleapis.com',
-    path: `/v1/models/${model}:generateContent?key=${apiKey}`,
+    path: `/v1beta/models/${model}:generateContent?key=${apiKey}`,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

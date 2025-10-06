@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const cors = require('cors');
 const session = require('express-session');
 const connectDB= require('./config/db');
@@ -32,9 +33,9 @@ app.use(cors({
     credentials: true
 }));
 
-app.use('/api/auth', authRoutes);
-app.use('/api/words', wordRoutes);
-app.use('/api/feedback', feedbackRoutes);
+app.use('/api/auth', authRoutes); // Auth routes for user management
+app.use('/api/words', wordRoutes); // Word definition and history routes
+app.use('/api/feedback', feedbackRoutes); // Feedback submission routes
 app.get('/', (req, res)=> res.send('API Running'));
 
 

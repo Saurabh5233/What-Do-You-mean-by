@@ -5,14 +5,13 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 // Initialize the Google AI client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ 
-  model: "gemini-1.5-flash-latest",
-  generationConfig: { responseMimeType: "application/json" }
+  model: "gemini-pro",
 });
 
 // Prompt helper for GPT
 const promptFor = (word) => {
   // Updated prompt for Gemini, explicitly asking for a JSON object.
-  return `Provide detailed information about the word "${word}". Respond with only a valid JSON object in the following format.
+  return `Provide detailed information for the word "${word}". Respond with only a valid JSON object in the following format, with no other text or formatting.
 {
   "Word": "...",
   "PartOfSpeech": "...",
@@ -43,7 +42,14 @@ exports.defineWord = async (req, res) => {
 
     let output = response.text();
 
-    // Gemini with JSON mode should return a clean JSON string.
+    // The 'gemini-pro' model can sometimes include markdown formatting.
+    // This will extract the clean JSON part.
+    const jsonStart = output.indexOf("{");
+    const jsonEnd = output.lastIndexOf("}");
+    if (jsonStart === -1 || jsonEnd === -1) {
+      throw new Error("The API response is not a valid JSON.");
+    }
+    output = output.slice(jsonStart, jsonEnd + 1);
     const parsedResult = JSON.parse(output);
 
     // Wrap keys in bold for frontend

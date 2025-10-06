@@ -103,16 +103,15 @@ function MainApp() {
   };
 
   const handleSave = async () => {
-    if (!definition.meaning || !user) return;
-    const newEntry = { word, synonyms: definition.synonyms, meaning: definition.meaning };
-
-    if (!savedWords.some((item) => item.word === word)) {
-      try {
-        const savedWord = await saveWord(newEntry);
-        setSavedWords([savedWord, ...savedWords]);
-      } catch (error) {
-        console.error('Failed to save word', error);
-      }
+    if (!definition.meaning || !user || savedWords.some((item) => item.word === word)) {
+      return;
+    }
+    try {
+      const newEntry = { word, synonyms: definition.synonyms, meaning: definition.meaning };
+      const savedWord = await saveWord(newEntry);
+      setSavedWords([savedWord, ...savedWords]);
+    } catch (error) {
+      console.error('Failed to save word', error);
     }
   };
 

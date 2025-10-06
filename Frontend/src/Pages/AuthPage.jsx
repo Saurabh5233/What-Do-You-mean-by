@@ -23,8 +23,9 @@ const AuthPage = () => {
 
   const handleGoogleLogin = () => {
     localStorage.setItem('postLoginRedirect', from);
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3030';
-    window.location.href = `${apiUrl}/api/auth/google`;
+    const googleLoginUrl = new URL('/api/auth/google', import.meta.env.VITE_API_URL || 'http://localhost:3030');
+    // In case you need to add query params in the future
+    window.location.href = googleLoginUrl.href;
   };
 
   const toggleForm = () => {

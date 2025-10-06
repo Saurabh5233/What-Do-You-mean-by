@@ -109,7 +109,9 @@ const googleCallback = async(req, res)=>{
         { expiresIn: '30d' }
     );
 
-    res.redirect(`${process.env.FRONTEND_URL || "http://localhost:5173"}/auth/callback?token=${token}`);
+    const redirectUrl = new URL(`${process.env.FRONTEND_URL || "http://localhost:5173"}/auth/callback`);
+    redirectUrl.searchParams.set('token', token);
+    res.redirect(redirectUrl.href);
 }
 
 

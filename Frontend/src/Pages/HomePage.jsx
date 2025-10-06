@@ -8,14 +8,14 @@ export default function HomePage({
   const speakText = ()=>{
     const text = word;
     if(text.trim() === ""){
-      alert("Please Enter some Text.....");
+      alert("Please enter some text...");
+      return;
     }
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang= "en-US";
     utterance.rate = 1;
     utterance.pitch = 1;
     speechSynthesis.speak(utterance);      
-
   }
 
   return (
@@ -53,11 +53,14 @@ export default function HomePage({
           </div>
         )}
 
-        {definition.meaning && (
+        {definition && Object.keys(definition).length > 0 && (
           <div className="mt-8 p-6 bg-[var(--bg-primary)] rounded-lg border border-[var(--border-color)] transition-colors duration-300">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-[var(--text-primary)]">Meaning:</h2>
-              <HiMiniSpeakerWave onClick={speakText} className='text-4xl text-green-600 cursor-pointer hover:scale-110 transition-transform'/>
+              <h2 className="text-2xl font-bold text-[var(--text-primary)]">Definition</h2>
+              <HiMiniSpeakerWave 
+                onClick={speakText} 
+                className='text-4xl text-green-600 cursor-pointer hover:scale-110 transition-transform'
+              />
               <button 
                 onClick={onSave} 
                 disabled={isSaved}
@@ -66,7 +69,14 @@ export default function HomePage({
                 {isSaved ? 'Saved' : 'Save'}
               </button>
             </div>
-            <div className="prose lg:prose-xl max-w-none dark:prose-invert dark:[&_*]:text-[var(--text-ternary)]" dangerouslySetInnerHTML={{ __html: definition.meaning }} />
+
+            <div className="space-y-3 text-[var(--text-primary)]">
+              {Object.entries(definition).map(([key, value]) => (
+                <p key={key}>
+                  <span dangerouslySetInnerHTML={{ __html: key }} />: {value}
+                </p>
+              ))}
+            </div>
           </div>
         )}
       </div>

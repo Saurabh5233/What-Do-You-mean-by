@@ -76,7 +76,7 @@ exports.defineWord = (req, res) => {
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
-  const model = 'gemini-1.5-flash-latest';
+  const model = 'gemini-1.5-flash';
   const postData = JSON.stringify({
     contents: [{ parts: [{ text: promptFor(word) }] }],
   });

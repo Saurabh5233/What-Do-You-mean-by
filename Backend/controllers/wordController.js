@@ -1,12 +1,11 @@
 const SavedWord = require('../models/SavedWord');
 const History = require('../models/History');
-const { Configuration, OpenAIApi } = require("openai");
+const OpenAI = require('openai');
 
-// OpenAI setup
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
+// const openai = new OpenAIApi(configuration);
 
 // Prompt helper for GPT
 const promptFor = (word) => {

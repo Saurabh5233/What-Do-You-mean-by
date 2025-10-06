@@ -6,15 +6,19 @@ export default function HomePage({
 }) {
 
   const speakText = ()=>{
+    if (!('speechSynthesis' in window)) {
+      alert("Sorry, your browser does not support text-to-speech.");
+      return;
+    }
+
     const text = word;
     if(text.trim() === ""){
-      alert("Please enter some text...");
+      // It might be better to not show an alert if the input is empty,
+      // as the speaker icon is only visible when there's a word and definition.
       return;
     }
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang= "en-US";
-    utterance.rate = 1;
-    utterance.pitch = 1;
     speechSynthesis.speak(utterance);      
   }
 

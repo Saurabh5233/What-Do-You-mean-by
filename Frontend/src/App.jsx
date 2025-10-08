@@ -77,13 +77,13 @@ function MainApp() {
       setDefinition(data);
 
       // Save to history after successfully fetching
-      const newHistoryItem = await saveHistory(wordToSearch);
+      const newHistoryItem = await saveHistory({ word: wordToSearch });
       setHistory((prev) => {
         const existingIndex = prev.findIndex(item => item.word === newHistoryItem.word);
         if (existingIndex !== -1) {
           const newHistory = [...prev];
           newHistory[existingIndex] = newHistoryItem;
-          return newHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+          return newHistory;
         } else {
           return [newHistoryItem, ...prev].sort((a, b) => new Date(b.date) - new Date(a.date));
         }

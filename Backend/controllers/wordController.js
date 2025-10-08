@@ -1,31 +1,5 @@
 const SavedWord = require('../models/SavedWord');
 const History = require('../models/History');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-
-// Initialize the Google AI client
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ 
-  model: "gemini-1.0-pro",
-});
-
-// Prompt helper for GPT
-const promptFor = (word) => {
-  // Updated prompt for Gemini, explicitly asking for a JSON object.
-  return `Provide detailed information for the word "${word}". Respond with only a valid JSON object in the following format, with no other text or formatting.
-{
-  "Word": "...",
-  "PartOfSpeech": "...",
-  "Meaning": "...",
-  "Synonyms": "...",
-  "Antonyms": "...",
-  "Example": "..."
-}
-Rules:
-- Provide real values.
-- Synonyms: 4-5 comma-separated.
-- Antonyms: 2-3 comma-separated.
-- Example sentence must include the word "${word}".`;
-};
 
 // Define word endpoint
 exports.defineWord = async (req, res) => {
@@ -33,35 +7,43 @@ exports.defineWord = async (req, res) => {
   if (!word) return res.status(400).json({ message: "Word is required" });
 
   try {
-    const result = await model.generateContent(promptFor(word));
-    const response = await result.response;
+    const apiResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
 
-    if (response.promptFeedback?.blockReason) {
-      return res.status(500).json({ message: "Request was blocked for safety reasons." });
+    if (!apiResponse.ok) {
+      if (apiResponse.status === 404) {
+        return res.status(404).json({ message: `Sorry, the word "${word}" was not found.` });
+      }
+      throw new Error(`API request failed with status ${apiResponse.status}`);
     }
 
-    let output = response.text();
+    const data = await apiResponse.json();
+    const firstResult = data[0];
+    const firstMeaning = firstResult.meanings[0];
 
-    // The 'gemini-pro' model can sometimes include markdown formatting.
-    // This will extract the clean JSON part.
-    const jsonStart = output.indexOf("{");
-    const jsonEnd = output.lastIndexOf("}");
-    if (jsonStart === -1 || jsonEnd === -1) {
-      throw new Error("The API response is not a valid JSON.");
-    }
-    output = output.slice(jsonStart, jsonEnd + 1);
-    const parsedResult = JSON.parse(output);
+    // Map the API response to the format your frontend expects
+    const parsedResult = {
+      "Word": firstResult.word,
+      "Phonetic": firstResult.phonetic || (firstResult.phonetics.find(p => p.text) || {}).text,
+      "PartOfSpeech": firstMeaning.partOfSpeech,
+      "Meaning": firstMeaning.definitions[0].definition,
+      "Synonyms": firstMeaning.synonyms.join(', '),
+      "Antonyms": firstMeaning.antonyms.join(', '),
+      "Example": firstMeaning.definitions.find(d => d.example)?.example || 'No example available.'
+    };
 
     // Wrap keys in bold for frontend
     const formattedResult = {};
     for (const key in parsedResult) {
-      formattedResult[`<b>${key}</b>`] = parsedResult[key];
+      // Ensure we don't add empty fields
+      if (parsedResult[key]) {
+        formattedResult[`<b>${key}</b>`] = parsedResult[key];
+      }
     }
 
     res.json(formattedResult);
 
   } catch (err) {
-    console.error("Gemini API Error:", err);
+    console.error("Dictionary API Error:", err);
     res.status(500).json({ message: "Failed to fetch definition", details: err.message });
   }
 };

@@ -69,7 +69,7 @@ const HomePage = ({
       {Object.keys(definition).length > 0 && (
         <div className="w-full max-w-2xl bg-white/10 backdrop-blur-sm rounded-lg p-6 text-white shadow-lg">
           <div className="flex justify-between items-start">
-            <h2 className="text-3xl font-bold mb-4 capitalize">{word}</h2>
+            <h2 className="text-3xl font-bold mb-4">{word}</h2>
             <button
               onClick={onSave}
               disabled={isSaved}

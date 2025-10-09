@@ -19,12 +19,14 @@ exports.defineWord = async (req, res) => {
     const data = await apiResponse.json();
     const firstResult = data[0];
     const firstMeaning = firstResult.meanings[0];
+    const phoneticWithAudio = firstResult.phonetics.find(p => p.audio);
 
     // Map the API response to the format your frontend expects
     const parsedResult = {
       "Word": firstResult.word,
       "Phonetic": firstResult.phonetic || (firstResult.phonetics.find(p => p.text) || {}).text,
       "PartOfSpeech": firstMeaning.partOfSpeech,
+      "Audio": phoneticWithAudio ? phoneticWithAudio.audio : null,
       "Meaning": firstMeaning.definitions[0].definition,
       "Synonyms": firstMeaning.synonyms.join(', '),
       "Antonyms": firstMeaning.antonyms.join(', '),

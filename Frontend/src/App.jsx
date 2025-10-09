@@ -32,6 +32,7 @@ function MainApp() {
   const [definition, setDefinition] = useState({});
   const [savedWords, setSavedWords] = useState([]);
   const [history, setHistory] = useState([]);
+  const [language, setLanguage] = useState('en'); // Add language state
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -73,11 +74,11 @@ function MainApp() {
     setDefinition({});
 
     try {
-      const data = await defineWord(wordToSearch);
+      const data = await defineWord(wordToSearch, language);
       setDefinition(data);
 
       // Save to history after successfully fetching
-      const newHistoryItem = await saveHistory({ word: wordToSearch });
+      const newHistoryItem = await saveHistory(wordToSearch);
       setHistory((prev) => {
         const existingIndex = prev.findIndex(item => item.word === newHistoryItem.word);
         if (existingIndex !== -1) {
@@ -245,6 +246,8 @@ function MainApp() {
               error={error}
               definition={definition}
               onSave={handleSave}
+              language={language}
+              onLanguageChange={setLanguage}
               isSaved={savedWords.some((item) => item.word === word)}
             />
           } />

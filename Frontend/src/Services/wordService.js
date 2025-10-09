@@ -1,8 +1,8 @@
 import { api } from './authService';
 
-export const defineWord = async (word) => {
+export const defineWord = async (word, language) => {
   try {
-    const response = await api.post('/words/define', { word });
+    const response = await api.post('/words/define', { word, language });
     return response.data;
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message || 'Failed to fetch definition';

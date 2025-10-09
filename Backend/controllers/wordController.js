@@ -2,12 +2,12 @@ const SavedWord = require('../models/SavedWord');
 const History = require('../models/History');
 
 // Define word endpoint
-exports.defineWord = async (req, res) => {
-  const { word } = req.body;
+exports.defineWord = async (req, res) => { 
+  const { word, language = 'en' } = req.body;
   if (!word) return res.status(400).json({ message: "Word is required" });
 
   try {
-    const apiResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    const apiResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/${language}/${word}`);
 
     if (!apiResponse.ok) {
       if (apiResponse.status === 404) {

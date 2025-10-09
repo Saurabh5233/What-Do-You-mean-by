@@ -103,11 +103,11 @@ function MainApp() {
   };
 
   const handleSave = async () => {
-    if (!definition.meaning || !user || savedWords.some((item) => item.word === word)) {
+    if (!definition['<b>Meaning</b>'] || !user || savedWords.some((item) => item.word === word)) {
       return;
     }
     try {
-      const newEntry = { word, synonyms: definition.synonyms, meaning: definition.meaning };
+      const newEntry = { word, synonyms: definition['<b>Synonyms</b>'], meaning: definition['<b>Meaning</b>'] };
       const savedWord = await saveWord(newEntry);
       setSavedWords([savedWord, ...savedWords]);
     } catch (error) {

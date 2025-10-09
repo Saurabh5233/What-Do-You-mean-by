@@ -93,7 +93,7 @@ exports.deleteSavedWords = async (req, res) => {
 // History endpoints
 exports.getHistory = async (req, res) => {
   try {
-    const history = await History.find({ user: req.user.id }).sort({ date: -1 });
+    const history = await History.find({ user: req.user.id }).sort({ updatedAt: -1 });
     res.json(history);
   } catch (err) {
     console.error(err.message);

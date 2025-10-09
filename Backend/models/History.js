@@ -11,6 +11,10 @@ const HistorySchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  date: { // <--- ADD THIS FIELD
+    type: Date,
+    default: Date.now, // Set a default value for new entries
+  }
 }, {
   // `timestamps: true` will add `createdAt` and `updatedAt` fields.
   // `createdAt` can represent the first time a word was searched.

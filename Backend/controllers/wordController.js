@@ -7,7 +7,9 @@ exports.defineWord = async (req, res) => {
   if (!word) return res.status(400).json({ message: "Word is required" });
 
   try {
-    const apiResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/${language}/${word}`);
+    const apiResponse = await fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/${language}/${encodeURIComponent(word)}`
+    );
 
     if (!apiResponse.ok) {
       if (apiResponse.status === 404) {

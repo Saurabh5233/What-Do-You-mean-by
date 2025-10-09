@@ -62,10 +62,15 @@ exports.getSavedWords = async (req, res) => {
 exports.saveWord = async (req, res) => {
   const { word, synonyms, meaning } = req.body;
   try {
+    // Find if the word is already saved by the user
     let savedWord = await SavedWord.findOne({ user: req.user.id, word });
-    if (savedWord) return res.status(400).json({ msg: 'Word already saved' });
 
-    savedWord = new SavedWord({ user: req.user.id, word, synonyms, meaning });
+    // If it's already saved, return the existing one.
+    if (savedWord) {
+      return res.json(savedWord);
+    }
+    // Otherwise, create a new one
+    savedWord = new SavedWord({ user: req.user.id, word, synonyms, meaning, date: new Date() });
     await savedWord.save();
     res.json(savedWord);
   } catch (err) {
@@ -98,16 +103,15 @@ exports.getHistory = async (req, res) => {
 
 exports.saveHistory = async (req, res) => {
   const { word } = req.body;
+  if (!word) {
+    return res.status(400).json({ message: 'Word is required' });
+  }
   try {
-    let historyItem = await History.findOne({ user: req.user.id, word });
-    if (historyItem) {
-      historyItem.date = new Date();
-      await historyItem.save();
-      return res.json(historyItem);
-    }
-
-    historyItem = new History({ user: req.user.id, word });
-    await historyItem.save();
+    const historyItem = await History.findOneAndUpdate(
+      { user: req.user.id, word: word }, // find a document with this filter
+      { $set: { date: new Date() } }, // update the date
+      { new: true, upsert: true } // options: return the new doc, and create if it doesn't exist
+    );
     res.json(historyItem);
   } catch (err) {
     console.error(err.message);

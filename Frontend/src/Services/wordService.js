@@ -58,7 +58,7 @@ export const getHistory = async () => {
 
 export const saveHistory = async (word) => {
   try {
-    const response = await api.post('/words/history', word);
+    const response = await api.post('/words/history', { word });
     console.log(response);
     return response.data;
   } catch (error) {

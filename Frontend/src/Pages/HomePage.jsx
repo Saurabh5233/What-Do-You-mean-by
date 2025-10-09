@@ -25,13 +25,13 @@ const HomePage = ({
     { code: 'it', name: 'Italian' },
     { code: 'ko', name: 'Korean' },
     { code: 'pt-BR', name: 'Brazilian Portuguese' },
-    { code_code: 'ar', name: 'Arabic' },
+    { code: 'ar', name: 'Arabic' },
     { code: 'tr', name: 'Turkish' },
   ];
 
   return (
-    <div className="container mx-auto p-4 flex flex-col items-center">
-      <h1 className="text-4xl md:text-6xl font-bold text-center mb-8 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#0F2027] to-[#2C5364] text-white flex flex-col items-center p-4">
+      <h1 className="text-4xl md:text-6xl font-bold text-center my-8">
         What Do You Mean By?
       </h1>
 
@@ -41,7 +41,7 @@ const HomePage = ({
             type="text"
             value={word}
             onChange={(e) => setWord(e.target.value)}
-            placeholder="Enter a word..."
+            placeholder="Search for a word..."
             className="w-full p-4 pr-12 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
           />
           <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white">
